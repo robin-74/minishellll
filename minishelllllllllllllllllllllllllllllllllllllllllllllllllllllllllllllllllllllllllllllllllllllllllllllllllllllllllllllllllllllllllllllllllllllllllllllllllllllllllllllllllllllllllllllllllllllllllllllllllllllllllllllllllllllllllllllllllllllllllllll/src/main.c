@@ -3,12 +3,11 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <stdio.h>
+#include <string.h>
 
 void printer_ls(t_node *node)
 {
-    t_node *temp;
-
-    temp = node;
+    t_node *temp = node;
     while (temp)
     {
         printf(" %s ->", temp->token);
@@ -26,7 +25,7 @@ t_node *create_new_node(char *token)
     new_node = malloc(sizeof(t_node));
     if (!new_node)
         return (NULL);
-    new_node->token = ft_strdup(token);
+    new_node->token = strdup(token);
     if (!new_node->token)
     {
         free(new_node);
@@ -73,40 +72,38 @@ void handle_in_ls(t_node **ls, char *input)
                 end++;
             token = strndup(input + start, end - start);
             if (token)
-                add_in_ls(ls, token);                                                          +
+                add_in_ls(ls, token);
             start = end + 1;
         }
         end++;
     }
-     
 }
 
-
-int	main(void)  
+int main(void)  
 {
-	char	*input;
-	size_t	len;
-	ssize_t	nr;
-    t_node *ls;
+    char *input = NULL;
+    size_t len = 0;
+    ssize_t nr;
+    t_node *ls = NULL;
 
-	input = NULL;
-    ls = NULL;
-	len = 0;
-    signal(SIGINT, sigint_handler);
-	while (1)
-	{
-        intro();
-        nr = ftgetline(&input, &len);
-        if (nr < -1)
+    signal(SIGINT, sigint_handler); 
+
+    while (1)
+    {
+        intro();   
+        nr = ftgetline(&input, &len);   
+        if (nr < 0)
             break;
-		if (nr > 0 && input[nr - 1] == '\n')
-			input[nr - 1] = '\0';
-		if (nr > 0)
-			handle_in_ls(&ls, input);
+        if (nr > 0 && input[nr - 1] == '\n')
+            input[nr - 1] = '\0';
+        if (nr > 0)
+            handle_in_ls(&ls, input);
         printer_ls(ls);
-		free(input);
-		input = NULL;
-	}
-	free(input);
-	return (0);
+        
+        free(input);
+        
+        input = NULL;
+    }
+
+    return (0);
 }
