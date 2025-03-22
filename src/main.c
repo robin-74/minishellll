@@ -10,7 +10,7 @@ void printer_ls(t_node *node)
     t_node *temp = node;
     while (temp)
     {
-        printf(" %s ->", temp->token);
+        printf(" %s ->aaaa", temp->token);
         temp = temp->next;
     }
     printf(" NULL\n");
