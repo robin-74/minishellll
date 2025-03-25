@@ -73,7 +73,7 @@ void handle_input(char *input, char **lineptr)
     if (!ft_strncmp(input, "exit", 4))
     {
         free(*lineptr);
-        write(1, "Exiting minishell...\n", 21);
+        printf(  "Exiting  ...\n");
         exit(0);
     }
     ft_printf("entered : ->  ");
@@ -84,5 +84,5 @@ void handle_input(char *input, char **lineptr)
 void sigint_handler(int sig)
 {
     (void)sig;
-    write(1, "\nminishell> ", 12);
+    printf("\nminishell");
 }

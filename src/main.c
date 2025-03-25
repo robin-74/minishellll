@@ -5,6 +5,37 @@
 #include <stdio.h>
 #include <string.h>
 
+
+
+int check_type(t_node *node)
+{
+    if (ft_strcmp(node->token, '<'))
+        node->type = rid_in;
+    else if (ft_strcmp(node->token, '>'))
+        node->type = rid_out;
+    else if (ft_strcmp(node->token, '>>'))
+        node->type = red_append;
+    else if (ft_strcmp(node->token, '<<'))
+        node->type = hered;
+    else if(ft_strcmp(node->token,'|'))
+        node->type = pipe;
+
+    else
+        node-type = arg /// handle it can be function or functin with args ... 
+    //string skip or default all of them  
+}
+
+void token_idtfy(t_node *node)
+{
+    //check for each toekn 
+    //1)_redirection  2)function 3)normal stuff 4)pipe
+    while(node)
+    {
+        check_type(node);
+        node = node->next;
+    }
+}
+
 void printer_ls(t_node *node)
 {
     t_node *temp = node;

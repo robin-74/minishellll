@@ -66,11 +66,22 @@
 
 	
 
+typedef enum e_token_type
+{
+    command,
+    arg,
+    pipe,
+    rid_in,
+    rid_out,
+    hered,
+    red_append,
+}   t_token_type;
 
 typedef struct node{
     char *token;
     int n;
     struct node *next;
+    enum token_type type;
 } t_node;
 
 char * get_next_line(int fd);

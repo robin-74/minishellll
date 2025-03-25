@@ -33,7 +33,8 @@ SRCS = ft_isalpha.c \
        ft_putendl_fd.c \
        ft_putnbr_fd.c \
        ft_calloc.c \
-       ft_strdup.c
+       ft_strdup.c \
+	   ft_strcmp.c
 
 OBJS = $(SRCS:.c=.o)
 
