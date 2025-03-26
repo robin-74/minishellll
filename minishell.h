@@ -1,7 +1,7 @@
 #include "ft_printf/ft_printf.h"
 #include "libft/libft.h"
 #include <stdlib.h>
-
+#include <stdio.h>
 // typedef struct s_prompt
 // {
 //     t_list *cmds; //linked list of cmd each node fiya s_mini
@@ -46,17 +46,17 @@
 // struct s_env_var *prev;
 // } t_env_var;
 
-// typedef struct s_cmd_node {
-// char **arr;
-// char *in;
-// char *out;
-// t_type type;
-// char *heredoc;
-// int append;
-// int err;
-// int ex_heredoc;
-// struct s_cmd_node *next;
-// } t_cmd_node;
+typedef struct s_cmd_node {
+char **arr;
+char *in;
+char *out;
+t_type type;
+char *heredoc;
+int append;
+int err;
+int ex_heredoc;
+struct s_cmd_node *next;
+} t_cmd_node;
 
 // typedef struct s_exec{
 // t_cmd_node *cmd_list;
@@ -65,12 +65,11 @@
 // } t_exec;
 
 	
-
 typedef enum e_token_type
 {
     command,
     arg,
-    pipe,
+    token_pipe,
     rid_in,
     rid_out,
     hered,
@@ -81,9 +80,10 @@ typedef struct node{
     char *token;
     int n;
     struct node *next;
-    enum token_type type;
+    struct s_cmd_node *info_node;;
+    t_token_type type;
 } t_node;
-
+void error_msg(char *s,t_node *head);
 char * get_next_line(int fd);
 void skipswhiteSpaces(char **input);
 void handleCd(char *input);

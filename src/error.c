@@ -12,3 +12,10 @@ void	free_list(t_node *head)
 		head = temp;
 	}
 }
+
+void error_msg(char *s,t_node *head)
+{
+    printf("error with %s",s);
+    free_list(head);
+    exit(1);
+}
