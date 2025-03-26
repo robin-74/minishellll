@@ -80,7 +80,8 @@ typedef struct node{
     char *token;
     int n;
     struct node *next;
-    struct s_cmd_node *info_node;;
+    struct s_cmd_node *info_node;
+    int pipe_exit =0 ;
     t_token_type type;
 } t_node;
 void error_msg(char *s,t_node *head);

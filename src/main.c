@@ -7,9 +7,20 @@
 
 //step 2 idtfy each node and fill the struct abt it 
 //
+
+void init_node_info(t_cmd_node *node_info)
+{
+    node_info->args = NULL;
+    node_info->input_file = NULL;
+    node_info->output_file = NULL;
+    node_info->append = 0;
+    node_info->next = NULL;
+}
 int getinfo(t_node *node , s_cmd_node node_info)
 {
-    
+    if (!node || !node_info)
+        return -1;
+    init_node_info(node_info);
 }
 void  fill_node_inf(t_node *node)
 {
