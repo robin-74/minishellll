@@ -1,0 +1,34 @@
+void print_type_node(t_node *node)
+{
+    if (!node)
+        return;
+
+    printf("Token: %s -> Type: ", node->token);
+    switch (node->type)
+    {
+        case COMMAND:
+            printf("COMMAND\n");
+            break;
+        case ARG:
+            printf("ARG\n");
+            break;
+        case TOKEN_PIPE:
+            printf("PIPE\n");
+            break;
+        case RID_IN:
+            printf("REDIRECT_IN\n");
+            break;
+        case RID_OUT:
+            printf("REDIRECT_OUT\n");
+            break;
+        case HERED:
+            printf("HEREDOC\n");
+            break;
+        case RED_APPEND:
+            printf("REDIRECT_APPEND\n");
+            break;
+        default:
+            printf("UNKNOWN\n");
+            break;
+    }
+}

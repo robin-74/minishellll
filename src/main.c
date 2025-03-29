@@ -1,162 +1,154 @@
 #include "../minishell.h"
 #include <unistd.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <stdio.h>
-#include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
-//step 2 idtfy each node and fill the struct abt it 
-//
-
-void init_node_info(t_cmd_node *node_info)
+int str_length(char *input)
 {
-    node_info->args = NULL;
-    node_info->input_file = NULL;
-    node_info->output_file = NULL;
-    node_info->append = 0;
-    node_info->next = NULL;
-}
-int getinfo(t_node *node , s_cmd_node node_info)
-{
-    if (!node || !node_info)
-        return -1;
-    init_node_info(node_info);
-}
-void  fill_node_inf(t_node *node)
-{
-    s_cmd_node *node_info;
-
-    if (getinfo(node,node_info) != 0)
-        error_msg("filling info for node handle //freee ");
-    node->info_node = node_info;
+    int i = 0;
+    while (input[i])
+        i++;
+    return i;
 }
 
-
-void check_type(t_node *node)
+t_node *init_newNode(int size_str, char *input, int start)
 {
-    if (ft_strcmp(node->token, "<") == 0)
-        node->type = rid_in;
-    else if (ft_strcmp(node->token, ">") == 0)
-        node->type = rid_out;
-    else if (ft_strcmp(node->token, ">>") == 0)
-        node->type = red_append;
-    else if (ft_strcmp(node->token, "<<") == 0)
-        node->type = hered;
-    else if (ft_strcmp(node->token, "|") == 0)
-        node->type = token_pipe;
-    else
-        node->type = arg;
-}
+    int idx = 0;
+    char *token = (char *)malloc(sizeof(char) * (size_str + 1));
+    if (!token)
+        return NULL;
 
-void token_idtfy(t_node *node)
-{
-    while (node)
+    while (idx < size_str)
     {
-        check_type(node);
-        node = node->next;
+        token[idx] = input[start + idx];
+        idx++;
     }
+    token[idx] = '\0';
+
+    t_node *new_node = (t_node *)malloc(sizeof(t_node));
+    if (!new_node)
+    {
+        free(token);
+        return NULL;
+    }
+    new_node->token = token;
+    new_node->next = NULL;
+    return new_node;
 }
 
-void printer_ls(t_node *node)
+t_node *to_linked_list(char *input)
 {
-    t_node *temp = node;
+    int n = str_length(input);
+    int i = 0;
+    t_node *head = NULL;
+    t_node *temp = NULL;
+
+    while (i < n)
+    {
+        while (input[i] && (input[i] == ' ' || input[i] == '\t'))
+            i++;
+
+        int size_str = 0;
+        while (input[i + size_str] && input[i + size_str] != ' ' && input[i + size_str] != '\t')
+            size_str++;
+
+        if (size_str > 0)
+        {
+            t_node *new_node = init_newNode(size_str, input, i);
+            if (!new_node)
+                return NULL;
+            if (!head)
+                head = new_node;
+            else
+                temp->next = new_node;
+            temp = new_node;
+            i += size_str;
+        }
+        i++;
+    }
+    return head;
+}
+
+void print_linked_list(t_node *head)
+{
+    t_node *temp = head;
     while (temp)
     {
-        printf("Token %ss  Type: %d\n", temp->token, temp->type);
+        printf("[ %s ] -> ", temp->token);
         temp = temp->next;
     }
     printf("NULL\n");
 }
 
-t_node *create_new_node(char *token)
-{
-    t_node *new_node;
 
-    if (!token)
-        return NULL;
-    new_node = malloc(sizeof(t_node));
-    if (!new_node)
-        return NULL;
-    new_node->token = strdup(token);
-    if (!new_node->token)
-    {
-        free(new_node);
-        return NULL;
-    }
-    new_node->next = NULL;
-    return new_node;
+
+void check_type(t_node *node)
+{
+    if (ft_strcmp(node->token, "<") == 0)
+        node->type = RID_IN;
+    else if (ft_strcmp(node->token, ">") == 0)
+        node->type = RID_OUT;
+    else if (ft_strcmp(node->token, ">>") == 0)
+        node->type = RED_APPEND;
+    else if (ft_strcmp(node->token, "<<") == 0)
+        node->type = HERED;
+    else if (ft_strcmp(node->token, "|") == 0)
+        node->type = TOKEN_PIPE;
+    else
+        node->type = ARG;
 }
 
-void add_in_ls(t_node **ls, char *input)
+void idtfy_node_type(t_node *head)
 {
-    t_node *new_node;
-    t_node *temp;
-
-    if (!ls || !input)
-        return;
-    new_node = create_new_node(input);
-    if (!new_node)
-        return;
-    if (*ls == NULL)
+    t_node *temp = head;
+    while (temp)
     {
-        *ls = new_node;
-        return;
-    }
-    temp = *ls;
-    while (temp->next)
+        check_type(temp);
+        // print_type_node(temp);  
         temp = temp->next;
-    temp->next = new_node;
-}
-
-void handle_in_ls(t_node **ls, char *input)
-{
-    char *token;
-    int start = 0, end = 0;
-
-    if (!ls || !input || !*input)
-        return;
-
-    while (input[end])
-    {
-        if (input[end] == ' ' || input[end + 1] == '\0')
-        {
-            if (input[end + 1] == '\0')
-                end++;
-            token = strndup(input + start, end - start);
-            if (token)
-                add_in_ls(ls, token);
-            start = end + 1;
-        }
-        end++;
     }
 }
 
+void group_node(t_node *head)
+{
+    t_node *temp = head;
+    t_cmd_node* gruop_node;
+    int pipe = 0 ; 
+    while(temp)
+    {
+        if(temp->type == TOKEN_PIPE)
+            pipe++;
+        temp->group = pipe;
+    }
+    fill_to_groups(head);
+
+}
 int main(void)
 {
     char *input = NULL;
     size_t len = 0;
-    ssize_t nr;
-    t_node *ls = NULL;
-
-    signal(SIGINT, sigint_handler);
+    ssize_t nr = 0;
 
     while (1)
     {
-        intro();
+        printf("\nminishell>> ");
         nr = ftgetline(&input, &len);
+
         if (nr < 0)
             break;
         if (nr > 0 && input[nr - 1] == '\n')
             input[nr - 1] = '\0';
-        if (nr > 0)
-        {
-            handle_in_ls(&ls, input);
-            token_idtfy(ls);
-            printer_ls(ls);
-        }
+
+        if (input[0] == '\0')
+            continue;
+
+        t_node *head = to_linked_list(input);
+        idtfy_node_type(head);
+        //print_linked_list(head);
+        group_node(head);                                            
+
         free(input);
         input = NULL;
     }
-
     return 0;
 }

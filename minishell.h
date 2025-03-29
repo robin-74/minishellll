@@ -50,7 +50,7 @@ typedef struct s_cmd_node {
 char **arr;
 char *in;
 char *out;
-t_type type;
+//t_type type;
 char *heredoc;
 int append;
 int err;
@@ -65,23 +65,24 @@ struct s_cmd_node *next;
 // } t_exec;
 
 	
-typedef enum e_token_type
-{
-    command,
-    arg,
-    token_pipe,
-    rid_in,
-    rid_out,
-    hered,
-    red_append,
-}   t_token_type;
+typedef enum e_token_type {
+    COMMAND,
+    ARG,
+    TOKEN_PIPE,
+    RID_IN,
+    RID_OUT,
+    HERED,
+    RED_APPEND
+} t_token_type;
+
 
 typedef struct node{
     char *token;
     int n;
     struct node *next;
+    int group;
     struct s_cmd_node *info_node;
-    int pipe_exit =0 ;
+   // int pipe_exit =0 ;
     t_token_type type;
 } t_node;
 void error_msg(char *s,t_node *head);
